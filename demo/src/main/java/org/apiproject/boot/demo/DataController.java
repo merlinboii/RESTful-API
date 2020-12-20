@@ -1,11 +1,11 @@
 package org.apiproject.boot.demo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 //import java.text.Format;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
+import java.util.stream.Stream;
 
 import javax.naming.spi.DirStateFactory.Result;
 
@@ -26,15 +26,20 @@ public class DataController {
 
     private List<Data> datas = new ArrayList<>();
     private List<StudentU> students = new ArrayList<>();
+    private List<UniversityInfo> universities = new ArrayList<>();
    // private final AtomicLong counter = new AtomicLong();
 
     public DataController() {
-       StudentU myStdInfo_1 = new StudentU("Bachelor",new UniversityInfo(1,"Mahidol","MU"));
-        StudentU myStdInfo_2 = new StudentU("Master",new UniversityInfo(1,"Mahidol","MU"));
-        students.add(myStdInfo_1);
-        students.add(myStdInfo_2);
+        UniversityInfo UniversityInfo_1 = new UniversityInfo(1, "Mahidol", "MU");
+        UniversityInfo UniversityInfo_2 = new UniversityInfo(2, "Thamasat", "TU");
+        universities.add(UniversityInfo_1);
+        universities.add(UniversityInfo_2);
+        StudentU StdInfo_1 = new StudentU("Bachelor",universities.get(0));
+        StudentU StdInfo_2 = new StudentU("Master",universities.get(1));
+        students.add(StdInfo_1);
+        students.add(StdInfo_2);
         datas.add(new Data(1,"Parichaya",students));
-        //datas.add(new Data(2,"Chanakarn",new StudentU("Bachalor",new UniversityInfo(1,"Mahidol","MU"))))
+        datas.add(new Data(2,"Chanakarn",students));
     }
 
     ////////////////////// UNIVERSIRY //////////////////////
@@ -42,17 +47,17 @@ public class DataController {
     // .../universities 
     //return all universities
     @GetMapping("/universities")
-    public List<Data> getDatas() {
-        return datas;
+    public List<UniversityInfo> getUniversity() {
+        return universities;
     }
 /*
     //return University data as well as all of name student who study in
     @GetMapping("/universities/{id}")
     public Data getDatasbyId(@PathVariable() long id) {
-        return datas.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
+        return universities.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
     
     }
-    
+   
     //Add new university
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/universities")
@@ -82,21 +87,26 @@ public class DataController {
         });
 
     }
-
+*/
     ////////////////////// STUDENT //////////////////////
     //return all students
     @GetMapping("/students")
-    public List<Data> getData() {
-        return datas;
-    }
-/*
+    public List<String> getData() {
+        List<String> temp = new ArrayList<>();
+        for(int i =0 ;i<datas.size();i++)
+        {
+            temp.add(datas.get(i).getName());
+        }
+        return temp;
+     }
+
     //return student data as well as all of name student who study in
     @GetMapping("/students/{id}")
     public Data getDatabyId(@PathVariable() long id) {
         return datas.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
     
     }
-    
+/*   
     //Add new student
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/students")
