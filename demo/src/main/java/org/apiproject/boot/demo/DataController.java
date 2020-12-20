@@ -47,8 +47,12 @@ public class DataController {
     // .../universities 
     //return all universities
     @GetMapping("/universities")
-    public List<UniversityInfo> getUniversity() {
-        return universities;
+    public List<String> getUniversities() {
+        List<String> temp = new ArrayList<>();
+        for(int i=0 ; i<universities.size(); i++){
+            temp.add(universities.get(i).getName());
+        }
+        return temp;
     }
 /*
     //return University data as well as all of name student who study in
@@ -91,7 +95,7 @@ public class DataController {
     ////////////////////// STUDENT //////////////////////
     //return all students
     @GetMapping("/students")
-    public List<String> getData() {
+    public List<String> getStudents() {
         List<String> temp = new ArrayList<>();
         for(int i =0 ;i<datas.size();i++)
         {
