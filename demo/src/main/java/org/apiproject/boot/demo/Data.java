@@ -6,9 +6,9 @@ import java.util.List;
 public class Data {
     private long id ;
     private String name;
-    private StudentU university ;
+    private List<StudentU> university;
     
-    public Data(long id,String name,StudentU university){
+    public Data(long id,String name,List<StudentU> university){
             this.id = id;
             this.name = name;
             this.university = university;
@@ -30,11 +30,11 @@ public class Data {
         this.name = name;
     }
 
-    public StudentU getUniversity() {
+    public List<StudentU> getUniversity() {
         return university;
     }
 
-    public void setUniversity(StudentU university) {
+    public void setUniversity(List<StudentU> university) {
         this.university = university;
     }
 

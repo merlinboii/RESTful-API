@@ -25,16 +25,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataController {
 
     private List<Data> datas = new ArrayList<>();
-    //private List<StudentU> students = new ArrayList<>();
+    private List<StudentU> students = new ArrayList<>();
    // private final AtomicLong counter = new AtomicLong();
 
     public DataController() {
-       /* StudentU myStdInfo_1 = new StudentU("Bachalor",new UniversityInfo(1,"Mahidol","MU"));
+       StudentU myStdInfo_1 = new StudentU("Bachelor",new UniversityInfo(1,"Mahidol","MU"));
         StudentU myStdInfo_2 = new StudentU("Master",new UniversityInfo(1,"Mahidol","MU"));
         students.add(myStdInfo_1);
-        students.add(myStdInfo_2);*/
-        Data myData = new Data(1,"Parichaya",new StudentU("Bachalor",new UniversityInfo(1,"Mahidol","MU")));
-        datas.add(myData);
+        students.add(myStdInfo_2);
+        datas.add(new Data(1,"Parichaya",students));
+        //datas.add(new Data(2,"Chanakarn",new StudentU("Bachalor",new UniversityInfo(1,"Mahidol","MU"))))
     }
 
     ////////////////////// UNIVERSIRY //////////////////////
