@@ -6,9 +6,9 @@ import java.util.List;
 public class Data {
     private long id ;
     private String name;
-    private List<StudentU> university ;
+    private StudentU university ;
     
-    public Data(long id,String name,List<StudentU> university){
+    public Data(long id,String name,StudentU university){
             this.id = id;
             this.name = name;
             this.university = university;
