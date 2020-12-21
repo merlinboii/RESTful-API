@@ -1,15 +1,17 @@
 package org.apiproject.boot.demo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 //import java.text.Format;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicLongArray;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.naming.spi.DirStateFactory.Result;
 
-import org.apiproject.boot.demo.Data.*;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,129 +26,132 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DataController {
 
-    private List<Data> datas = new ArrayList<>();
-    private List<StudentU> students = new ArrayList<>();
+    private List<Student> students = new ArrayList<>();
+    private List<Education> educations = new ArrayList<>();
     private List<UniversityInfo> universities = new ArrayList<>();
-   // private final AtomicLong counter = new AtomicLong();
+    private final AtomicLong counter = new AtomicLong();
 
     public DataController() {
-        UniversityInfo UniversityInfo_1 = new UniversityInfo(1, "Mahidol", "MU");
-        UniversityInfo UniversityInfo_2 = new UniversityInfo(2, "Thamasat", "TU");
+        UniversityInfo UniversityInfo_1 = new UniversityInfo(1, "Mahidol University", "MU");
+        UniversityInfo UniversityInfo_2 = new UniversityInfo(2, "Thammasat University", "TU");
+        UniversityInfo UniversityInfo_3 = new UniversityInfo(3, "Chulalongkorn University", "CU");
         universities.add(UniversityInfo_1);
         universities.add(UniversityInfo_2);
-        StudentU StdInfo_1 = new StudentU("Bachelor",universities.get(0));
-        StudentU StdInfo_2 = new StudentU("Master",universities.get(1));
-        students.add(StdInfo_1);
-        students.add(StdInfo_2);
-        datas.add(new Data(1,"Parichaya",students));
-        datas.add(new Data(2,"Chanakarn",students));
+        universities.add(UniversityInfo_3);
+        Education StdEdu_1 = new Education("Bachelor's Degree",universities.get(0));
+        Education StdEdu_2 = new Education("Master's Degree",universities.get(1));
+        educations.add(StdEdu_1);
+        educations.add(StdEdu_2);
+        students.add(new Student(1,"Parichaya",educations));
+        students.add(new Student(2,"Chanakarn",educations));
     }
 
     ////////////////////// UNIVERSIRY //////////////////////
 
+    @GetMapping("/universitiesall")
+    public List<UniversityInfo> getAllUniversity() {
+        return universities;
+    }
     // .../universities 
     //return all universities
     @GetMapping("/universities")
-    public List<String> getUniversities() {
-        List<String> temp = new ArrayList<>();
-        for(int i=0 ; i<universities.size(); i++){
-            temp.add(universities.get(i).getName());
-        }
-        return temp;
+    public List<String> getUniversity() {
+        return universities.stream().map(names -> names.getName()).collect(Collectors.toList());
+        /*List<String> temp = new ArrayList<>();
+        for(int i=0 ; i<universities.size(); i++){temp.add(universities.get(i).getName());
+        }*/
     }
-/*
-    //return University data as well as all of name student who study in
+
+/*     //return University data as well as all of name student who study in
     @GetMapping("/universities/{id}")
-    public Data getDatasbyId(@PathVariable() long id) {
+    public Data getUniversitybyId(@PathVariable() long id) {
         return universities.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
     
-    }
+    } */
    
     //Add new university
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/universities")
-    public void addData(@RequestBody Data datas) {
-        datas.add(new Data(counter.getAndIncrement(), Data.getValue()));
+    public void addUniversity(@RequestBody UniversityInfo university) {
+        universities.add(new UniversityInfo(counter.getAndIncrement(), university.getName(),university.getNameInit()));
 
     }
-
-    //Edit University info
+/*  
+     //Edit University info
     @PutMapping("/universities/{id}")
-    public void updateData(@RequestBody Data data, @PathVariable long id) {
-        datas.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
-            result.setValue(Data.getValue());
+    public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
+        universities.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
+            result.setName(university.getName());
+            result.setName_init(university.getNameInit());
         }, () -> {
         });
-
     }
 
     //Delete university
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/universities/{id}")
-    public void updateData(@PathVariable long id) {
-        datas.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
-            datas.remove(result);
-        }, () -> {
-            throw new DataNotFoundException(id)
-        });
+    public void DeleteUniversity(@PathVariable long id) {
+        universities.stream().filter(result -> result.getId() == id)
+        .findFirst()
+        .ifPresentOrElse(result -> {universities.remove(result);}, () -> {}); 
+    }  */
 
-    }
-*/
     ////////////////////// STUDENT //////////////////////
+    @GetMapping("/studentsall")
+    public List<Student> getAllStudents() {
+        return students;
+    }
+
     //return all students
     @GetMapping("/students")
     public List<String> getStudents() {
-        List<String> temp = new ArrayList<>();
-        for(int i =0 ;i<datas.size();i++)
+       /*  List<String> temp = new ArrayList<>();
+        for(int i =0 ;i<students.size();i++)
         {
-            temp.add(datas.get(i).getName());
-        }
-        return temp;
+            temp.add(students.get(i).getName());
+        } */
+        return students.stream().map(names -> names.getName()).collect(Collectors.toList());
      }
-
+/* 
     //return student data as well as all of name student who study in
     @GetMapping("/students/{id}")
-    public Data getDatabyId(@PathVariable() long id) {
-        return datas.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
+    public Student getStudentbyId(@PathVariable() long id) {
+        return students.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
     
-    }
-/*   
-    //Add new student
+    }   
+     //Add new student
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/students")
-    public void addData(@RequestBody Data data) {
-        datas.add(new Data(counter.getAndIncrement(), Data.getValue()));
-
+    public void addStudent(@RequestBody Student student ,@RequestBody Education studentEdu ) {
+       // educations.add(new Education(studentEdu.getDegree(),studentEdu.getUInfo()));
+        students.add(new Student(counter.getAndIncrement(), student.getName(), student.getEducation()));
     }
-
     //Edit student info
     @PutMapping("/students/{id}")
-    public void updateData(@RequestBody Data data, @PathVariable long id) {
-        datas.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
-            result.setValue(Data.getValue());
+    public void updateStudent(@RequestBody Student student, @PathVariable long id) {
+        students.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
+            result.setName(student.getName());
+            result.setEducation(student.getEducation());
         }, () -> {
         });
-
-    }
-
+    } 
     //Delete student
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/students/{id}")
-    public void updateData(@PathVariable long id) {
-        datas.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
-            datas.remove(result);
+    public void DeleteStudent(@PathVariable long id) {
+        students.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
+            students.remove(result);
         }, () -> {
-            throw new DataNotFoundException(id)
+            throw new DataNotFoundException(id);
         });
+    } */
 
-    }
+}
 
-
-
+/*
     // .../data/search?name=...name...
     @GetMapping("/data/search")
     public String getDataByname(@RequestParam(defaultValue = "NaN") String name) {
         return "search" + name;
     }
 */
-}
