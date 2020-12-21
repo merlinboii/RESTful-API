@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 import javax.naming.spi.DirStateFactory.Result;
 
-
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,8 +60,6 @@ public class DataController {
                     String uniName_u = universities.get(k).getName();
                     if (uniName_std.equalsIgnoreCase(uniName_u))
                         universities.get(k).addName_std(students.get(i).getName());
-                        System.out.println(universities.get(k).getName());
-                    
                 }
             }
         }
@@ -95,27 +93,25 @@ public class DataController {
     @PostMapping("/universities")
     public void addUniversity(@RequestBody UniversityInfo university) {
         universities.add(new UniversityInfo(counter.getAndIncrement(), university.getName(),university.getNameInit()));
-
     }
-/*  
+  
      //Edit University info
     @PutMapping("/universities/{id}")
     public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
         universities.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
             result.setName(university.getName());
             result.setName_init(university.getNameInit());
-        }, () -> {
-        });
+        }, () -> {});
     }
 
     //Delete university
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/universities/{id}")
+    @DeleteMapping("/universities/{id}")
     public void DeleteUniversity(@PathVariable long id) {
         universities.stream().filter(result -> result.getId() == id)
         .findFirst()
         .ifPresentOrElse(result -> {universities.remove(result);}, () -> {}); 
-    }  */
+    }  
 
     ////////////////////// STUDENT //////////////////////
     @GetMapping("/studentsall")
