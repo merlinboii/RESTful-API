@@ -26,9 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DataController {
 
-    private List<Student> students = new ArrayList<>();
+    private List<Student> students = new ArrayList<>(); 
     private List<Education> educations = new ArrayList<>();
+    private List<Education> educations2 = new ArrayList<>(); // eduation / students
+    //private List<List<Education>> edu_list = new ArrayList<>(); 
     private List<UniversityInfo> universities = new ArrayList<>();
+    private List<String> student_list = new ArrayList<>();
     private final AtomicLong counter = new AtomicLong();
 
     public DataController() {
@@ -38,12 +41,30 @@ public class DataController {
         universities.add(UniversityInfo_1);
         universities.add(UniversityInfo_2);
         universities.add(UniversityInfo_3);
-        Education StdEdu_1 = new Education("Bachelor's Degree",universities.get(0));
-        Education StdEdu_2 = new Education("Master's Degree",universities.get(1));
+
+        Education StdEdu_1 = new Education("Bachelor's Degree",universities.get(0).getName());
+        Education StdEdu_2 = new Education("Master's Degree",universities.get(1).getName());
         educations.add(StdEdu_1);
         educations.add(StdEdu_2);
+        educations2.add(new Education("Bachelor's Degree",universities.get(0).getName()));
+
         students.add(new Student(1,"Parichaya",educations));
-        students.add(new Student(2,"Chanakarn",educations));
+        students.add(new Student(2,"Malakor",educations2));
+
+        for (int i = 0; i < students.size(); i++) {
+            int innerLoop = students.get(i).getEducation().size();
+            for (int j = 0; j < innerLoop; j++) {
+                String uniName_std = students.get(i).getEducation().get(j).getuName();
+                int finalLoop = universities.size();
+                for (int k = 0; k < finalLoop; k++) {
+                    String uniName_u = universities.get(k).getName();
+                    if (uniName_std.equalsIgnoreCase(uniName_u))
+                        universities.get(k).addName_std(students.get(i).getName());
+                        System.out.println(universities.get(k).getName());
+                    
+                }
+            }
+        }
     }
 
     ////////////////////// UNIVERSIRY //////////////////////
@@ -62,12 +83,12 @@ public class DataController {
         }*/
     }
 
-/*     //return University data as well as all of name student who study in
+     //return University data as well as all of name student who study in
     @GetMapping("/universities/{id}")
-    public Data getUniversitybyId(@PathVariable() long id) {
+    public UniversityInfo getUniversitybyId(@PathVariable() long id) {
         return universities.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
-    
-    } */
+        
+    } 
    
     //Add new university
     @ResponseStatus(HttpStatus.CREATED)
@@ -112,13 +133,29 @@ public class DataController {
         } */
         return students.stream().map(names -> names.getName()).collect(Collectors.toList());
      }
-/* 
-    //return student data as well as all of name student who study in
+
+    //return student data as well as all of name university that study in
     @GetMapping("/students/{id}")
     public Student getStudentbyId(@PathVariable() long id) {
         return students.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
-    
-    }   
+
+        /* List<String> temp = new ArrayList<>();
+        for(int i=0;i<students.size();i++){
+            if(students.get(i).getId() == id){ 
+                for(int j=0;j<students.get(i).getEducation().size();j++){
+                    System.out.println("Student name"students.get(i).getName() + students.get(i).getEducation().get(j).getUInfo().getName());
+                }    
+            }
+        } */
+         
+        /* return students.stream()
+        .filter(result -> result.getId() == id)
+        .map(edu -> edu.getEducation())
+        .map(Uname -> Uname.get)
+        .findFirst();   */ 
+    } 
+
+    /*  
      //Add new student
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/students")
