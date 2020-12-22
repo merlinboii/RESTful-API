@@ -18,4 +18,11 @@ public class DataExceptionAdvice {
     String dataNotFound(DataNotFoundException e){
         return e.getMessage();
     }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
+    @ExceptionHandler(DataCannotCreateException.class)
+    String dataCannotCreated(DataCannotCreateException e){
+        return e.getMessage();
+    }
 }
