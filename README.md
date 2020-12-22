@@ -10,7 +10,7 @@
 * Postman
 ### Installation
 * Ensure that Java 8 and Maven 3.6 are installed
-* Clone this repository : ```git clone https://github.com/cyberbliss/springboot-rest-example.git```
+* Clone this repository : ```git clone https://github.com/filmptz/RESTful-API.git```
 
 ## Usage
 ### Running the Spring Boot app
