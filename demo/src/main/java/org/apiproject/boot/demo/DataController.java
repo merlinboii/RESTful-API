@@ -80,21 +80,18 @@ public class DataController {
         for(int i=0 ; i<universities.size(); i++){temp.add(universities.get(i).getName());
         }*/
     }
-
      //return University data as well as all of name student who study in
     @GetMapping("/universities/{id}")
     public UniversityInfo getUniversitybyId(@PathVariable() long id) {
         return universities.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
         
-    } 
-   
+    }   
     //Add new university
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/universities")
     public void addUniversity(@RequestBody UniversityInfo university) {
         universities.add(new UniversityInfo(counter.getAndIncrement(), university.getName(),university.getNameInit()));
-    }
-  
+    }  
      //Edit University info
     @PutMapping("/universities/{id}")
     public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
@@ -103,7 +100,6 @@ public class DataController {
             result.setName_init(university.getNameInit());
         }, () -> {});
     }
-
     //Delete university
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/universities/{id}")
@@ -112,6 +108,7 @@ public class DataController {
         .findFirst()
         .ifPresentOrElse(result -> {universities.remove(result);}, () -> {}); 
     }  
+
 
     ////////////////////// STUDENT //////////////////////
     @GetMapping("/studentsall")
@@ -122,11 +119,6 @@ public class DataController {
     //return all students
     @GetMapping("/students")
     public List<String> getStudents() {
-       /*  List<String> temp = new ArrayList<>();
-        for(int i =0 ;i<students.size();i++)
-        {
-            temp.add(students.get(i).getName());
-        } */
         return students.stream().map(names -> names.getName()).collect(Collectors.toList());
      }
 
@@ -134,31 +126,16 @@ public class DataController {
     @GetMapping("/students/{id}")
     public Student getStudentbyId(@PathVariable() long id) {
         return students.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
-
-        /* List<String> temp = new ArrayList<>();
-        for(int i=0;i<students.size();i++){
-            if(students.get(i).getId() == id){ 
-                for(int j=0;j<students.get(i).getEducation().size();j++){
-                    System.out.println("Student name"students.get(i).getName() + students.get(i).getEducation().get(j).getUInfo().getName());
-                }    
-            }
-        } */
-         
-        /* return students.stream()
-        .filter(result -> result.getId() == id)
-        .map(edu -> edu.getEducation())
-        .map(Uname -> Uname.get)
-        .findFirst();   */ 
     } 
-
-    /*  
+     
      //Add new student
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/students")
-    public void addStudent(@RequestBody Student student ,@RequestBody Education studentEdu ) {
+    public void addStudent(@RequestBody Student student) {
        // educations.add(new Education(studentEdu.getDegree(),studentEdu.getUInfo()));
         students.add(new Student(counter.getAndIncrement(), student.getName(), student.getEducation()));
     }
+
     //Edit student info
     @PutMapping("/students/{id}")
     public void updateStudent(@RequestBody Student student, @PathVariable long id) {
@@ -170,14 +147,14 @@ public class DataController {
     } 
     //Delete student
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/students/{id}")
+    @DeleteMapping("/students/{id}")
     public void DeleteStudent(@PathVariable long id) {
         students.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
             students.remove(result);
         }, () -> {
             throw new DataNotFoundException(id);
         });
-    } */
+    } 
 
 }
 
