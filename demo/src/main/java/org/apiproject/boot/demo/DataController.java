@@ -26,89 +26,114 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DataController {
 
-    private List<Student> students = new ArrayList<>(); 
+    private List<Student> students = new ArrayList<>();
     private List<Education> educations = new ArrayList<>();
-    private List<Education> educations2 = new ArrayList<>(); // eduation / students
-    //private List<List<Education>> edu_list = new ArrayList<>(); 
+    private List<Education> educations_2 = new ArrayList<>(); 
     private List<UniversityInfo> universities = new ArrayList<>();
-    private List<String> student_list = new ArrayList<>();
-    private final AtomicLong counter = new AtomicLong();
+    private final AtomicLong counter_student = new AtomicLong();
+    private final AtomicLong counter_university = new AtomicLong();
 
     public DataController() {
-        UniversityInfo UniversityInfo_1 = new UniversityInfo(1, "Mahidol University", "MU");
-        UniversityInfo UniversityInfo_2 = new UniversityInfo(2, "Thammasat University", "TU");
-        UniversityInfo UniversityInfo_3 = new UniversityInfo(3, "Chulalongkorn University", "CU");
-        universities.add(UniversityInfo_1);
-        universities.add(UniversityInfo_2);
-        universities.add(UniversityInfo_3);
 
-        Education StdEdu_1 = new Education("Bachelor's Degree",universities.get(0).getName());
-        Education StdEdu_2 = new Education("Master's Degree",universities.get(1).getName());
-        educations.add(StdEdu_1);
-        educations.add(StdEdu_2);
-        educations2.add(new Education("Bachelor's Degree",universities.get(0).getName()));
+        // Sample Data
+        universities.add(new UniversityInfo(counter_university.getAndIncrement(), "Mahidol University", "MU"));
+        universities.add(new UniversityInfo(counter_university.getAndIncrement(), "Thammasat University", "TU"));
+        universities.add(new UniversityInfo(counter_university.getAndIncrement(), "Chulalongkorn University", "CU"));
 
-        students.add(new Student(1,"Parichaya",educations));
-        students.add(new Student(2,"Malakor",educations2));
+        educations.add(new Education("Bachelor's Degree", universities.get(0).getName()));
+        educations.add(new Education("Master's Degree", universities.get(1).getName()));
+        educations_2.add(new Education("Bachelor's Degree", universities.get(0).getName()));
 
+        students.add(new Student(counter_student.getAndIncrement(), "Parichaya", educations));
+        students.add(new Student(counter_student.getAndIncrement(), "Malakor", educations_2));
+        MapStudentUniversity();
+    }
+
+    public void MapStudentUniversity() {
+        int innerLoop, finalLoop;
+        String uniName_Std, uniName_U;
         for (int i = 0; i < students.size(); i++) {
-            int innerLoop = students.get(i).getEducation().size();
+            innerLoop = students.get(i).getEducation().size();
             for (int j = 0; j < innerLoop; j++) {
-                String uniName_std = students.get(i).getEducation().get(j).getuName();
-                int finalLoop = universities.size();
+                uniName_Std = students.get(i).getEducation().get(j).getuName();
+                finalLoop = universities.size();
                 for (int k = 0; k < finalLoop; k++) {
-                    String uniName_u = universities.get(k).getName();
-                    if (uniName_std.equalsIgnoreCase(uniName_u))
+                    uniName_U = universities.get(k).getName();
+                    if (uniName_Std.equalsIgnoreCase(uniName_U))
                         universities.get(k).addName_std(students.get(i).getName());
                 }
             }
         }
     }
 
-    ////////////////////// UNIVERSIRY //////////////////////
+    public void checkUniversityName() {
 
+    }
+
+    ////////////////////// UNIVERSIRY //////////////////////
     @GetMapping("/universitiesall")
     public List<UniversityInfo> getAllUniversity() {
         return universities;
     }
-    // .../universities 
-    //return all universities
+
+    // .../universities
+    // return all universities
     @GetMapping("/universities")
     public List<String> getUniversity() {
         return universities.stream().map(names -> names.getName()).collect(Collectors.toList());
-        /*List<String> temp = new ArrayList<>();
-        for(int i=0 ; i<universities.size(); i++){temp.add(universities.get(i).getName());
-        }*/
     }
-     //return University data as well as all of name student who study in
+
+    // return University data as well as all of name student who study in
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @GetMapping("/universities/{id}")
     public UniversityInfo getUniversitybyId(@PathVariable() long id) {
-        return universities.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
-        
-    }   
-    //Add new university
+        return universities.stream().filter(result -> result.getId() == id).findFirst().orElseThrow(() -> new DataNotFoundException(id));
+
+    }
+
+    // Add new university
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/universities")
     public void addUniversity(@RequestBody UniversityInfo university) {
-        universities.add(new UniversityInfo(counter.getAndIncrement(), university.getName(),university.getNameInit()));
-    }  
-     //Edit University info
+        try{
+            int loop = universities.size();
+            for (int k = 0; k < loop; k++) {
+                String uniName_U = universities.get(k).getName();
+                if (university.getName().equalsIgnoreCase(uniName_U))
+                throw new DataCannotCreateException();
+                else{
+                    universities.add(new UniversityInfo(counter_university.getAndIncrement(), university.getName(),university.getNameInit()));
+                }
+            }
+            
+        }catch(DataCannotCreateException ex){
+            throw new DataCannotCreateException();
+         }
+        
+    }
+
+    // Edit University info
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/universities/{id}")
     public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
         universities.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
             result.setName(university.getName());
             result.setName_init(university.getNameInit());
-        }, () -> {});
+        }, () -> {
+            throw new DataNotFoundException(id);
+        });
     }
-    //Delete university
+
+    // Delete university
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/universities/{id}")
     public void DeleteUniversity(@PathVariable long id) {
-        universities.stream().filter(result -> result.getId() == id)
-        .findFirst()
-        .ifPresentOrElse(result -> {universities.remove(result);}, () -> {}); 
-    }  
-
+        universities.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
+            universities.remove(result);
+        }, () -> {
+            throw new DataNotFoundException(id);
+        });
+    }
 
     ////////////////////// STUDENT //////////////////////
     @GetMapping("/studentsall")
@@ -116,36 +141,44 @@ public class DataController {
         return students;
     }
 
-    //return all students
+    // return all students
     @GetMapping("/students")
     public List<String> getStudents() {
         return students.stream().map(names -> names.getName()).collect(Collectors.toList());
-     }
+    }
 
-    //return student data as well as all of name university that study in
+    // return student data as well as all of name university that study in
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @GetMapping("/students/{id}")
     public Student getStudentbyId(@PathVariable() long id) {
-        return students.stream().filter(result -> result.getId() == id).findFirst().orElseGet(() -> null);
-    } 
-     
-     //Add new student
+        return students.stream().filter(result -> result.getId() == id).findFirst().orElseThrow(() -> new DataNotFoundException(id));
+    }
+
+    // Add new student
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/students")
     public void addStudent(@RequestBody Student student) {
-       // educations.add(new Education(studentEdu.getDegree(),studentEdu.getUInfo()));
-        students.add(new Student(counter.getAndIncrement(), student.getName(), student.getEducation()));
+        try{
+            students.add(new Student(counter_student.getAndIncrement(), student.getName(), student.getEducation()));
+        }catch(DataCannotCreateException ex){
+           throw new DataCannotCreateException();
+        }
+        
     }
 
-    //Edit student info
+    // Edit student info
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/students/{id}")
     public void updateStudent(@RequestBody Student student, @PathVariable long id) {
         students.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
             result.setName(student.getName());
             result.setEducation(student.getEducation());
         }, () -> {
+            throw new DataNotFoundException(id);
         });
-    } 
-    //Delete student
+    }
+
+    // Delete student
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/students/{id}")
     public void DeleteStudent(@PathVariable long id) {
@@ -154,14 +187,14 @@ public class DataController {
         }, () -> {
             throw new DataNotFoundException(id);
         });
-    } 
+    }
 
 }
 
 /*
-    // .../data/search?name=...name...
-    @GetMapping("/data/search")
-    public String getDataByname(@RequestParam(defaultValue = "NaN") String name) {
-        return "search" + name;
-    }
-*/
+ * // .../data/search?name=...name...
+ * 
+ * @GetMapping("/data/search") public String
+ * getDataByname(@RequestParam(defaultValue = "NaN") String name) { return
+ * "search" + name; }
+ */
