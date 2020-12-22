@@ -5,7 +5,7 @@
 ### Technology Stacks
 * Java 11
 * Spring Boot 2.4
-* Maven
+* Maven 3.6
 ### API Testing
 * Postman
 * Google Chrome
