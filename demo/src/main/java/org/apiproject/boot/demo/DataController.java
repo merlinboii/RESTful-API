@@ -1,15 +1,10 @@
 package org.apiproject.boot.demo;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-//import java.text.Format;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import javax.naming.spi.DirStateFactory.Result;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +21,7 @@ public class DataController {
 
     private List<Student> students = new ArrayList<>();
     private List<Education> educations = new ArrayList<>();
-    private List<Education> educations_2 = new ArrayList<>(); 
+    private List<Education> educations_2 = new ArrayList<>();
     private List<UniversityInfo> universities = new ArrayList<>();
     private final AtomicLong counter_student = new AtomicLong();
     private final AtomicLong counter_university = new AtomicLong();
@@ -87,7 +80,8 @@ public class DataController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @GetMapping("/universities/{id}")
     public UniversityInfo getUniversitybyId(@PathVariable() long id) {
-        return universities.stream().filter(result -> result.getId() == id).findFirst().orElseThrow(() -> new DataNotFoundException(id));
+        return universities.stream().filter(result -> result.getId() == id).findFirst()
+                .orElseThrow(() -> new DataNotFoundException(id));
 
     }
 
@@ -95,21 +89,22 @@ public class DataController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/universities")
     public void addUniversity(@RequestBody UniversityInfo university) {
-        try{
+        try {
             int loop = universities.size();
             for (int k = 0; k < loop; k++) {
                 String uniName_U = universities.get(k).getName();
                 if (university.getName().equalsIgnoreCase(uniName_U))
-                throw new DataCannotCreateException();
-                else{
-                    universities.add(new UniversityInfo(counter_university.getAndIncrement(), university.getName(),university.getNameInit()));
+                    throw new DataCannotCreateException();
+                else {
+                    universities.add(new UniversityInfo(counter_university.getAndIncrement(), university.getName(),
+                            university.getNameInit()));
                 }
             }
-            
-        }catch(DataCannotCreateException ex){
+
+        } catch (DataCannotCreateException ex) {
             throw new DataCannotCreateException();
-         }
-        
+        }
+
     }
 
     // Edit University info
@@ -151,19 +146,20 @@ public class DataController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @GetMapping("/students/{id}")
     public Student getStudentbyId(@PathVariable() long id) {
-        return students.stream().filter(result -> result.getId() == id).findFirst().orElseThrow(() -> new DataNotFoundException(id));
+        return students.stream().filter(result -> result.getId() == id).findFirst()
+                .orElseThrow(() -> new DataNotFoundException(id));
     }
 
     // Add new student
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/students")
     public void addStudent(@RequestBody Student student) {
-        try{
+        try {
             students.add(new Student(counter_student.getAndIncrement(), student.getName(), student.getEducation()));
-        }catch(DataCannotCreateException ex){
-           throw new DataCannotCreateException();
+        } catch (DataCannotCreateException ex) {
+            throw new DataCannotCreateException();
         }
-        
+
     }
 
     // Edit student info
