@@ -10,7 +10,7 @@
 * Postman
 * Google Chrome
 ### Installation
-* Ensure that Java 8 and Maven 3.6 are installed
+* Ensure that Java 11 and Maven 3.6 are installed
 * Clone this repository : ```git clone https://github.com/filmptz/RESTful-API.git```
 
 ## Usage
