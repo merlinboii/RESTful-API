@@ -11,7 +11,7 @@ public class DataNotFoundException extends RuntimeException {
     }
 
     public DataNotFoundException(long id){
-        super("Could not find data"+ id);
+        super("Could not find data id :: "+ id);
     }
     
 }
