@@ -46,7 +46,7 @@ All inputs and outputs use JSON format.
   ```
   ### Guide : POST | PUT  method
   
- # JSON format for POST and PUT Method
+ JSON format for POST and PUT Method
   
   ```
   /universities
