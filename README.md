@@ -46,9 +46,27 @@ All inputs and outputs use JSON format.
   ```
   ### Guide : POST | PUT  method
   
+ # JSON format for POST and PUT Method
+  
   ```
   /universities
-  POST
+  {
+        "id": int,
+        "name": String,
+        "nameInit": String
+  }
+  
+  /students 
+   {
+        "id": int,
+        "name": String,
+        "education": [
+            {
+                "degree": String,
+                "uName": String
+            }
+        ]
+    }
   
   ```
   
