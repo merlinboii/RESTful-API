@@ -48,7 +48,7 @@ All inputs and outputs use JSON format.
   
  JSON format for POST and PUT Method
   
-  ```
+  ```JSON
   /universities
   {
         "id": int,
