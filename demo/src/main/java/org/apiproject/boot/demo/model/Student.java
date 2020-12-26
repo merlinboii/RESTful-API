@@ -1,4 +1,4 @@
-package org.apiproject.boot.demo;
+package  org.apiproject.boot.demo.model;
 
 import java.util.List;
 

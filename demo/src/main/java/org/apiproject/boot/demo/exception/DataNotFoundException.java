@@ -1,4 +1,4 @@
-package org.apiproject.boot.demo;
+package org.apiproject.boot.demo.exception;
 
 public class DataNotFoundException extends RuntimeException {
     /**

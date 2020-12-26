@@ -1,4 +1,4 @@
-package org.apiproject.boot.demo;
+package  org.apiproject.boot.demo.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class UniversityInfo {
         return name;
     }
 
-    public String getNameInit(){
+    public String getName_init(){
         return name_init;
     }
     public void setName_init(String name_init) {

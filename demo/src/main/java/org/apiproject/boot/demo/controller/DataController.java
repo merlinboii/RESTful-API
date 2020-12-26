@@ -1,11 +1,12 @@
-package org.apiproject.boot.demo;
+package org.apiproject.boot.demo.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-
+import org.apiproject.boot.demo.model.*;
+import org.apiproject.boot.demo.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,9 +60,6 @@ public class DataController {
         }
     }
 
-    public void checkUniversityName() {
-
-    }
 
     ////////////////////// UNIVERSIRY //////////////////////
     @GetMapping("/universitiesall")
@@ -95,11 +93,9 @@ public class DataController {
                 String uniName_U = universities.get(k).getName();
                 if (university.getName().equalsIgnoreCase(uniName_U))
                     throw new DataCannotCreateException();
-                else {
-                    universities.add(new UniversityInfo(counter_university.getAndIncrement(), university.getName(),
-                            university.getNameInit()));
-                }
             }
+            universities.add(new UniversityInfo(counter_university.getAndIncrement(), university.getName(),
+                    university.getName_init()));
 
         } catch (DataCannotCreateException ex) {
             throw new DataCannotCreateException();
@@ -113,7 +109,7 @@ public class DataController {
     public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
         universities.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
             result.setName(university.getName());
-            result.setName_init(university.getNameInit());
+            result.setName_init(university.getName_init());
         }, () -> {
             throw new DataNotFoundException(id);
         });
@@ -186,11 +182,3 @@ public class DataController {
     }
 
 }
-
-/*
- * // .../data/search?name=...name...
- * 
- * @GetMapping("/data/search") public String
- * getDataByname(@RequestParam(defaultValue = "NaN") String name) { return
- * "search" + name; }
- */

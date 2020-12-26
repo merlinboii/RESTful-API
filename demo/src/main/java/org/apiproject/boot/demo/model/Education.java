@@ -1,4 +1,4 @@
-package org.apiproject.boot.demo;
+package org.apiproject.boot.demo.model;
 
 public class Education {
     private String degree;
@@ -23,13 +23,5 @@ public class Education {
     public String getDegree(){
         return degree;
     }
-
-    /* public UniversityInfo getUInfo() {
-        return uInfo;
-    }
-
-    public void setUInfo(UniversityInfo uInfo) {
-        this.uInfo = uInfo;
-    }   */
 
 }

@@ -1,4 +1,4 @@
-package org.apiproject.boot.demo;
+package org.apiproject.boot.demo.exception;
 
 public class DataCannotCreateException extends RuntimeException{
     private static final long serialVersionUID = 1L;

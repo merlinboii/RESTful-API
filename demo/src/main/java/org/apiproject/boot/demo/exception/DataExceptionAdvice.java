@@ -1,4 +1,4 @@
-package org.apiproject.boot.demo;
+package org.apiproject.boot.demo.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
