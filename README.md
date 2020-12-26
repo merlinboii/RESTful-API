@@ -44,6 +44,13 @@ All inputs and outputs use JSON format.
   DELETE /{id} - Delete student
   
   ```
+  ### Guide : POST | PUT  method
+  
+  ```
+  /universities
+  POST
+  
+  ```
   
   ## JSON format
   
@@ -72,7 +79,7 @@ All inputs and outputs use JSON format.
    }
 ```
 
-### Add sample data 
+## Add sample data 
 Add data by editing it in the DataController.java 
 ```Java
 public DataController() {
