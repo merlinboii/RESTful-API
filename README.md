@@ -48,12 +48,12 @@ All inputs and outputs use JSON format.
   
  JSON format for POST and PUT Method
   
-  ```
+  ```JSON
   /universities
   {
         "id": int,
         "name": String,
-        "nameInit": String
+        "name_init": String
   }
   
   /students 
@@ -93,7 +93,7 @@ All inputs and outputs use JSON format.
     "id": int,
     "name": String,
     "name_std": String[],
-    "nameInit": String
+    "name_init": String
    }
 ```
 
