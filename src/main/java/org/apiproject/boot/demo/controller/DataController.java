@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-
 import org.apiproject.boot.demo.model.*;
 import org.apiproject.boot.demo.exception.*;
 import org.springframework.http.HttpStatus;
@@ -42,7 +41,7 @@ public class DataController {
         students.add(new Student(counter_student.getAndIncrement(), "Parichaya Thanawuthikrai", educations));
 
         educations_2.add(new Education("Bachelor's Degree", universities.get(0).getName()));
-        students.add(new Student(counter_student.getAndIncrement(), "Sathinee Thanaeuthikrai", educations_2));
+        students.add(new Student(counter_student.getAndIncrement(), "Sathinee Thanawuthikrai", educations_2));
 
         MapStudentUniversity(0);
     }
@@ -50,7 +49,7 @@ public class DataController {
     public void MapStudentUniversity(int c) {
         int innerLoop, finalLoop;
         String uniName_Std, uniName_U;
-        int check = 0;
+        boolean found = true;
         switch (c) {
             case 0:
                 for (int i = 0; i < students.size(); i++) {
@@ -77,11 +76,12 @@ public class DataController {
                         uniName_U = universities.get(k).getName();
                         if (uniName_Std.equalsIgnoreCase(uniName_U)) {
                             universities.get(k).addName_std(students.get(i).getName());
-                            check = 1;
-                        }
+
+                        } else
+                            found = false;
                     }
                 }
-                if (check == 0) {
+                if (!found) {
                     students.remove(students.get(i));
                     throw new DataCannotCreateException(
                             "Could not created the data :: Can not found university name in UniversityInfo.");
@@ -135,10 +135,8 @@ public class DataController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/universities/{id}")
     public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
-        boolean found=false;
-        boolean set=false;
+        boolean found=true;
         String temp_name,temp_name_init;
-        String temp_new_n,temp_new_n_init;
         for(int i=0;i<universities.size();i++){
             if(universities.get(i).getId()==id){
                 temp_name = universities.get(i).getName();
@@ -147,8 +145,6 @@ public class DataController {
                 universities.get(i).setName(university.getName());
                 universities.get(i).setName_init(university.getName_init());
 
-                temp_new_n = universities.get(i).getName();
-                temp_new_n_init = universities.get(i).getName_init();
                  for(int j=0;j< universities.size() ;j++){
                     if(j!=i && universities.get(j).getName().equalsIgnoreCase(universities.get(i).getName())){
                         universities.get(i).setName(temp_name);
@@ -156,14 +152,9 @@ public class DataController {
                         throw new DataCannotCreateException(
                             "Could not created the data :: Already has this university name");
                     }
-                    else set = true;
                  }
-                 if(set){
-                    universities.get(i).setName(temp_new_n);
-                    universities.get(i).setName_init(temp_new_n_init);
-                }
-                 found = true;
             }
+            else found = false;
         }
         
         if(!found){
@@ -219,44 +210,44 @@ public class DataController {
     @PutMapping("/students/{id}")
     public void updateStudent(@RequestBody Student student, @PathVariable long id) {
 
-        int check = 0;
-        int found =0;
+        boolean Unfound=true;
+        boolean dontHave = true;
+        
         for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getId() == id) { 
-                found = 1;
+            Student target_std =students.get(i);
+            if (target_std.getId() == id) { 
+                Unfound=false;
+                String old_std_name = target_std.getName();
                 for (int j = 0; j < universities.size(); j++) {
-                    for (int k = 0; k < universities.get(j).getName_std().size(); k++) {
-                        if (universities.get(j).getName_std().get(k).equalsIgnoreCase(students.get(i).getName())) {
-                            students.get(i).setName(student.getName());
-                            students.get(i).setEducation(student.getEducation()); 
-                            universities.get(j).getName_std().remove(universities.get(j).getName_std().get(k));
-                            for(int x=0;x<students.get(i).getEducation().size();x++){
-                                if(students.get(i).getEducation().get(x).getuName().equalsIgnoreCase(universities.get(j).getName())){
-                                    universities.get(j).addName_std(students.get(i).getName());
-                                }
-                               else{
-                                    for (int y = 0; y < universities.size(); y++){
-                                        if(students.get(i).getEducation().get(x).getuName().equalsIgnoreCase(universities.get(y).getName())){
-                                            universities.get(y).addName_std(students.get(i).getName());
-                                            check = 1;
-                                        }
-                                    }
-                                }    
-                            }         
+                   UniversityInfo target_uni = universities.get(j);
+                    for (int k = 0; k < target_uni.getName_std().size(); k++) {
+                        //std name in uni[j] == std name in Std[i]?
+                        if (target_uni.getName_std().get(k).equalsIgnoreCase(old_std_name)) {
+                            target_std.setName(student.getName());//new name
+                            target_std.setEducation(student.getEducation());//new 
+                            //Already SET in Student class
+                            target_uni.getName_std().remove(target_uni.getName_std().get(k));//remove when found equals
                         }
                     }
-                    
-                }
-                
-                if (check == 0) {
-                    students.remove(students.get(i));
+                    for(int x=0;x<target_std.getEducation().size();x++){
+                        if(target_std.getEducation().get(x).getuName().equalsIgnoreCase(target_uni.getName())){
+                                target_uni.addName_std(target_std.getName());
+                                dontHave = false;
+                        }
+                        
+                    }    
+                } 
+                if (dontHave) {
+                    students.remove(target_std);
                     throw new DataCannotCreateException(
-                            "Could not created the data :: Can not found university name in UniversityInfo.");
-                }
+                            "Could not created the data :: Can not found this university name in UniversityInfo.");
+                } 
+                                                
+            }     
+        }                    
+    
 
-            }
-        }
-        if(found!=1){
+        if(Unfound){
             throw new DataNotFoundException(id); 
         } 
     }
