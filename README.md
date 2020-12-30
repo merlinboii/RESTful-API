@@ -98,10 +98,12 @@ All inputs and outputs use JSON format.
 ## Sample data
 ```
 1.
+
 Student name : Parichaya Thanawuthikrai 
 Education : Bachelor's Degree, Mahidol University
             Master's Degree, Thammasat University
 2.
+
 Student name : Sathinee Thanawuthikrai 
 Education : Bachelor's Degree, Mahidol University
  
