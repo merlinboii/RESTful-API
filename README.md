@@ -1,4 +1,4 @@
-## API DEMO PROJECT | RESTful Api
+## API PROJECT | RESTful Api
  RESTful API for collecting university and student information.<br>
  (This repository is being developed to database connecting)
  
@@ -8,7 +8,6 @@
 * Maven 3.6
 ### API Testing
 * Postman
-* Google Chrome
 ### Installation
 * Ensure that Java 11 and Maven 3.6 are installed
 * Clone this repository : ```git clone https://github.com/filmptz/RESTful-API.git```
@@ -29,7 +28,7 @@ All inputs and outputs use JSON format.
 /universities
   GET / - List of university name
   GET /{id} - View university data as well as List of all student name
-  POST / - Add university - required : int id , String name , String name_init
+  POST / - Add university - required : String name , String name_init
   PUT /{id} - Edit university data - required : String name , String name_init
   DELETE /{id} - Delete university
 
@@ -39,7 +38,7 @@ All inputs and outputs use JSON format.
 /students
   GET / - List of student name
   GET /{id} - View student data 
-  POST / - Add student - required : int id , String name , List<Education> education
+  POST / - Add student - required : String name , List<Education> education
   PUT /{id} - Edit student data - required : String name , List<Education> education
   DELETE /{id} - Delete student
   
@@ -72,7 +71,7 @@ All inputs and outputs use JSON format.
   
   ## JSON format
   
-* Class : Student <br>
+* Class : Student 
 ```JSON
    {
     "id": int,
@@ -87,7 +86,7 @@ All inputs and outputs use JSON format.
     "uName": String
   }
 ```
-* Class : UniversityInfo <br>
+* Class : UniversityInfo 
 ```JSON
    {
     "id": int,
@@ -96,23 +95,34 @@ All inputs and outputs use JSON format.
     "name_init": String
    }
 ```
-
+## Sample data
+```
+1.
+Student name : Parichaya Thanawuthikrai 
+Education : Bachelor's Degree, Mahidol University
+            Master's Degree, Thammasat University
+2.
+Student name : Sathinee Thanawuthikrai 
+Education : Bachelor's Degree, Mahidol University
+ 
+```
 ## Add sample data 
 Add data by editing it in the DataController.java 
 ```Java
 public DataController() {
 
         // Sample Data
+        //UniversityInfo
         //universities.add(new UniversityInfo(int id, String name, String name_init));
         universities.add(new UniversityInfo(counter_university.getAndIncrement(), "Mahidol University", "MU"));
         
-        //educations.add(new Education(String degree, String uName)); 
-        // String uName get method universities.get(index).getName()
+        //Education
+        //educations.add(new Education(String degree, String uName)); uName get method universities.get(index).getName()
         educations.add(new Education("Bachelor's Degree", universities.get(0).getName()));
-    
-        //students.add(new Student(int id,String name, List<Education> education)); 
-        // List<Education> education get educations
-        students.add(new Student(counter_student.getAndIncrement(), "Parichaya", educations));
+     
+        //Student
+        //students.add(new Student(int id,String name, List<Education> education)); List<Education> education get educations
+        students.add(new Student(counter_student.getAndIncrement(), "Parichaya Thanawuthikrai", educations));
         MapStudentUniversity();
     }
 ```
