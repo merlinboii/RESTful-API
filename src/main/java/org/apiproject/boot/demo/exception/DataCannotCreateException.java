@@ -5,7 +5,7 @@ public class DataCannotCreateException extends RuntimeException{
 
     /* public DataCannotCreateException() {
     } */
-    public DataCannotCreateException(){
-        super("Could not created the data");
+    public DataCannotCreateException(String ex){
+        super(ex);
     }
 }
