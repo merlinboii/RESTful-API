@@ -23,24 +23,24 @@ All inputs and outputs use JSON format.
 ```
 
 /universitiesall
-  GET / - List of university data
+  GET    /universitiesall     - List of university data
 
 /universities
-  GET / - List of university name
-  GET /{id} - View university data as well as List of all student name
-  POST / - Add university - required : String name , String name_init
-  PUT /{id} - Edit university data - required : String name , String name_init
-  DELETE /{id} - Delete university
+  GET    /universities        - List of university name
+  GET    /universities/{id}   - View university data as well as List of all student name
+  POST   /universities        - Add university - required : String name , String name_init
+  PUT    /universities/{id}   - Edit university data - required : String name , String name_init
+  DELETE /universities/{id}   - Delete university
 
 /studentsall
-  GET / - List of student data
+  GET    /studentsall         - List of student data
 
 /students
-  GET / - List of student name
-  GET /{id} - View student data 
-  POST / - Add student - required : String name , List<Education> education
-  PUT /{id} - Edit student data - required : String name , List<Education> education
-  DELETE /{id} - Delete student
+  GET    /students            - List of student name
+  GET    /students/{id}       - View student data 
+  POST   /students/students   - Add student - required : String name , List<Education> education
+  PUT    /students/{id}       - Edit student data - required : String name , List<Education> education
+  DELETE /students/{id}       - Delete student
   
   ```
   ### Guide : POST | PUT  method
@@ -48,14 +48,14 @@ All inputs and outputs use JSON format.
  JSON format for POST and PUT Method
   
   ```JSON
-  /universities
+  /universities || /universities/{id}
   {
         "id": int,
         "name": String,
         "name_init": String
   }
   
-  /students 
+  /students || /students/{id} 
    {
         "id": int,
         "name": String,
@@ -72,7 +72,7 @@ All inputs and outputs use JSON format.
   The function will return the correct conversion if the supplied problems are properly formatted, otherwise, it will **return a string** that describes an error that is meaningful to the user.
 * Situations that will return an error:
      * If the requesting **id** do not has in the data will return: ```Could not find data id :: {id}```
-     * Each editing or adding to the **university data** [ PUT .../universities/{id} | POST .../universities/{id} ] should not revise the university name to the name already in the university data. Otherwise, the function will return: ```Could not created the data :: Already has this university name```
+     * Each editing or adding to the **university data** [ PUT .../universities/{id} | POST .../universities/{id} ] should not revise the university name to the name already in the university data. Otherwise, the function will return:<br> ```Could not created the data :: Already has this university name```
      * Each editing or adding **the name of the university in the student data** [ PUT .../students/{id} | POST .../students/{id} ]. The university name should be match in university name of university data. Otherwise, the function will return:<br> ```Could not created the data :: Can not found this university name in UniversityInfo.```
 * Handling Http errors:
      * **404: Not Found** will return: ```Could not find data id :: {id}```
