@@ -85,7 +85,7 @@ public class DataController {
                     students.remove(students.get(i));
                     counter_student.getAndDecrement();
                     throw new DataCannotCreateException(
-                            "Could not created the data :: Can not found university name in UniversityInfo.");
+                            "Could not created the data :: Can not found this university name in UniversityInfo.");
                 }
             }
 
@@ -111,6 +111,7 @@ public class DataController {
     }
 
     // return University data as well as all of name student who study in
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @GetMapping("/universities/{id}")
     public UniversityInfo getUniversitybyId(@PathVariable() long id) {
         return universities.stream().filter(result -> result.getId() == id).findFirst()
@@ -139,9 +140,10 @@ public class DataController {
     }
 
     // Edit University info
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @PutMapping("/universities/{id}")
-    public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
+    public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id)
+            throws INTERNAL_SERVER_ERROR {
         int found = 0;
         String temp_name, temp_name_init;
         for (int i = 0; i < universities.size(); i++) {
@@ -149,28 +151,32 @@ public class DataController {
                 found = 1;
                 temp_name = universities.get(i).getName();
                 temp_name_init = universities.get(i).getName_init();
-
-                universities.get(i).setName(university.getName());
-                universities.get(i).setName_init(university.getName_init());
-
-                for (int j = 0; j < universities.size(); j++) {
-                    if (j != i && universities.get(j).getName().equalsIgnoreCase(universities.get(i).getName())) {
-                        universities.get(i).setName(temp_name);
-                        universities.get(i).setName_init(temp_name_init);
-                        throw new DataCannotCreateException(
-                                "Could not created the data :: Already has this university name");
+                try {
+                    universities.get(i).setName(university.getName());
+                    universities.get(i).setName_init(university.getName_init());
+                    for (int j = 0; j < universities.size(); j++) {
+                        if (j != i && universities.get(j).getName().equalsIgnoreCase(universities.get(i).getName())) {
+                            universities.get(i).setName(temp_name);
+                            universities.get(i).setName_init(temp_name_init);
+                            throw new DataCannotCreateException(
+                                    "Could not created the data :: Already has this university name");
+                        }
                     }
+                } catch (NullPointerException e) {
+                    universities.get(i).setName(temp_name);
+                    universities.get(i).setName_init(temp_name_init);
+                    throw new INTERNAL_SERVER_ERROR();
                 }
+
             }
         }
-
         if (found != 1) {
             throw new DataNotFoundException(id);
         }
     }
 
     // Delete university
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @DeleteMapping("/universities/{id}")
     public void DeleteUniversity(@PathVariable long id) {
         universities.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
@@ -193,6 +199,7 @@ public class DataController {
     }
 
     // return student data as well as all of name university that study in
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @GetMapping("/students/{id}")
     public Student getStudentbyId(@PathVariable() long id) {
         return students.stream().filter(result -> result.getId() == id).findFirst()
@@ -216,7 +223,7 @@ public class DataController {
     }
 
     // Edit student info
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @PutMapping("/students/{id}")
     public void updateStudent(@RequestBody Student student, @PathVariable long id) throws INTERNAL_SERVER_ERROR {
 
@@ -286,10 +293,7 @@ public class DataController {
                     target_std.setEducation(temp_edu);
                     throw new INTERNAL_SERVER_ERROR();
                 }
-
             }
-            
-
         }
         if (found != 1) {
             throw new DataNotFoundException(id);
@@ -297,7 +301,7 @@ public class DataController {
     }
 
     // Delete student
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @DeleteMapping("/students/{id}")
     public void DeleteStudent(@PathVariable long id) {
         students.stream().filter(result -> result.getId() == id).findFirst().ifPresentOrElse(result -> {
