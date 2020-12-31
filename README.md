@@ -71,7 +71,7 @@ All inputs and outputs use JSON format.
   ### Exception Handling
   The function will return the correct conversion if the supplied problems are properly formatted, otherwise, it will **return a string** that describes an error that is meaningful to the user.
 * Situations that will return an error:
-     * If the requesting **id** do not has in the data will return: ```Could not find data id :: {id}```
+     * If the requesting **id** do not has in the data will return:<br> ```Could not find data id :: {id}```
      * Each editing or adding to the **university data** should not revise the university name to the name already in the university data. Otherwise, the function will return:<br> ```Could not created the data :: Already has this university name```
      * Each editing or adding **the name of the university in the student data**. The university name should be match in university name of university data. Otherwise, the function will return:<br> ```Could not created the data :: Can not found this university name in UniversityInfo.```
 * Handling Http errors:
