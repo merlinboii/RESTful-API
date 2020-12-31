@@ -14,7 +14,7 @@
 
 ## Usage
 ### Running the Spring Boot app
-* Navigate to the directory into which you cloned the repository and execute this:``` mvn spring-boot:run``` <br>
+* Navigate to the directory into which you cloned the repository and execute this: ```mvn spring-boot:run``` <br>
 * Once started you can access the APIs on port 4000, e.g. ```http://localhost:4000/universities```<br>
 * The port number can be changed by editing the port property in ```demo/src/main/resources/application.properties```<br>
 
@@ -68,8 +68,15 @@ All inputs and outputs use JSON format.
     }
   
   ```
+  ### Rules
+  The function will return the correct conversion if the supplied problems are properly formatted, otherwise, it will **return a string** that describes an error that is meaningful to the user.
+* Situations that will return an error:
+     * If the requesting **id** do not has in the data will return: ```Could not find data id :: {id}```
+     * Each amendment to the university data  ```[ PUT .../universities/{id} ]``` should not revise the university name to the name already in the data. Otherwise, the function will return: ```Could not created the data :: Already has this university name```
+     * 
+    
   
-  ## JSON format
+  ### JSON format
   
 * Class : Student 
 ```JSON
