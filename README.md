@@ -16,7 +16,7 @@
 ### Running the Spring Boot app
 * Navigate to the directory into which you cloned the repository and execute this: ```mvn spring-boot:run``` <br>
 * Once started you can access the APIs on port 4000, e.g. ```http://localhost:4000/universities```<br>
-* The port number can be changed by editing the port property in ```demo/src/main/resources/application.properties```<br>
+* The port number can be changed by editing the port property in ```src/main/resources/application.properties```<br>
 
 ## RESTful API Endpoints
 All inputs and outputs use JSON format.
