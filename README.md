@@ -28,8 +28,8 @@ All inputs and outputs use JSON format.
 /universities
   GET    /universities        - List of university name
   GET    /universities/{id}   - View university data as well as List of all student name
-  POST   /universities        - Add university - required : String name , String name_init
-  PUT    /universities/{id}   - Edit university data - required : String name , String name_init
+  POST   /universities        - Add university       -> required : String name , String name_init
+  PUT    /universities/{id}   - Edit university data -> required : String name , String name_init
   DELETE /universities/{id}   - Delete university
 
 /studentsall
@@ -38,8 +38,8 @@ All inputs and outputs use JSON format.
 /students
   GET    /students            - List of student name
   GET    /students/{id}       - View student data 
-  POST   /students/students   - Add student - required : String name , List<Education> education
-  PUT    /students/{id}       - Edit student data - required : String name , List<Education> education
+  POST   /students/students   - Add student         -> required : String name , List<Education> education
+  PUT    /students/{id}       - Edit student data   -> required : String name , List<Education> education
   DELETE /students/{id}       - Delete student
   
   ```
