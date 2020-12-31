@@ -145,6 +145,7 @@ public class DataController {
     public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id)
             throws INTERNAL_SERVER_ERROR {
         int found = 0;
+        int same=0;
         String temp_name, temp_name_init;
         for (int i = 0; i < universities.size(); i++) {
             if (universities.get(i).getId() == id) {
@@ -156,10 +157,23 @@ public class DataController {
                     universities.get(i).setName_init(university.getName_init());
                     for (int j = 0; j < universities.size(); j++) {
                         if (j != i && universities.get(j).getName().equalsIgnoreCase(universities.get(i).getName())) {
+                            same=1;
                             universities.get(i).setName(temp_name);
                             universities.get(i).setName_init(temp_name_init);
                             throw new DataCannotCreateException(
                                     "Could not created the data :: Already has this university name");
+                        }
+                    }
+                    if(same!=1){
+                        for(int std=0;std<students.size();std++){
+                            //students.get(std);
+                            for(int c=0;c<students.get(std).getEducation().size();c++){
+                               //students.get(std).getEducation().get(c);
+                                if(students.get(std).getEducation().get(c).getuName().equalsIgnoreCase(temp_name)){
+                                    students.get(std).getEducation().get(c).setuName(universities.get(i).getName());
+                                }
+                            }
+
                         }
                     }
                 } catch (NullPointerException e) {
