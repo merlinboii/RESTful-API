@@ -49,7 +49,7 @@ public class DataController {
     public void MapStudentUniversity(int c) {
         int innerLoop, finalLoop;
         String uniName_Std, uniName_U;
-        boolean found = true;
+        int found = 0;
         switch (c) {
             case 0:
                 for (int i = 0; i < students.size(); i++) {
@@ -76,13 +76,14 @@ public class DataController {
                         uniName_U = universities.get(k).getName();
                         if (uniName_Std.equalsIgnoreCase(uniName_U)) {
                             universities.get(k).addName_std(students.get(i).getName());
+                            found = 1;
+                        }
 
-                        } else
-                            found = false;
                     }
                 }
-                if (!found) {
+                if (found != 1) {
                     students.remove(students.get(i));
+                    counter_student.getAndDecrement();
                     throw new DataCannotCreateException(
                             "Could not created the data :: Can not found university name in UniversityInfo.");
                 }
@@ -112,22 +113,28 @@ public class DataController {
     // return University data as well as all of name student who study in
     @GetMapping("/universities/{id}")
     public UniversityInfo getUniversitybyId(@PathVariable() long id) {
-        return universities.stream().filter(result -> result.getId() == id).findFirst().orElseThrow(()->new DataNotFoundException(id));
+        return universities.stream().filter(result -> result.getId() == id).findFirst()
+                .orElseThrow(() -> new DataNotFoundException(id));
     }
 
     // Add new university
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/universities")
-    public void addUniversity(@RequestBody UniversityInfo university) {
-            int loop = universities.size();
+    public void addUniversity(@RequestBody UniversityInfo university) throws INTERNAL_SERVER_ERROR {
+        int loop = universities.size();
+        try {
             for (int k = 0; k < loop; k++) {
                 String uniName_U = universities.get(k).getName();
                 if (university.getName().equalsIgnoreCase(uniName_U))
                     throw new DataCannotCreateException(
                             "Could not created the data :: Already has this university name");
             }
-            if(!universities.add(new UniversityInfo(counter_university.getAndIncrement(), university.getName(),university.getName_init())))
-              throw new DataCannotCreateException("Could not created the data");
+            universities.add(new UniversityInfo(counter_university.getAndIncrement(), university.getName(),
+                    university.getName_init()));
+        } catch (NullPointerException e) {
+            counter_university.getAndDecrement();
+            throw new INTERNAL_SERVER_ERROR();
+        }
 
     }
 
@@ -135,29 +142,29 @@ public class DataController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/universities/{id}")
     public void updateUniversity(@RequestBody UniversityInfo university, @PathVariable long id) {
-        boolean found=true;
-        String temp_name,temp_name_init;
-        for(int i=0;i<universities.size();i++){
-            if(universities.get(i).getId()==id){
+        int found = 0;
+        String temp_name, temp_name_init;
+        for (int i = 0; i < universities.size(); i++) {
+            if (universities.get(i).getId() == id) {
+                found = 1;
                 temp_name = universities.get(i).getName();
                 temp_name_init = universities.get(i).getName_init();
 
                 universities.get(i).setName(university.getName());
                 universities.get(i).setName_init(university.getName_init());
 
-                 for(int j=0;j< universities.size() ;j++){
-                    if(j!=i && universities.get(j).getName().equalsIgnoreCase(universities.get(i).getName())){
+                for (int j = 0; j < universities.size(); j++) {
+                    if (j != i && universities.get(j).getName().equalsIgnoreCase(universities.get(i).getName())) {
                         universities.get(i).setName(temp_name);
                         universities.get(i).setName_init(temp_name_init);
                         throw new DataCannotCreateException(
-                            "Could not created the data :: Already has this university name");
+                                "Could not created the data :: Already has this university name");
                     }
-                 }
+                }
             }
-            else found = false;
         }
-        
-        if(!found){
+
+        if (found != 1) {
             throw new DataNotFoundException(id);
         }
     }
@@ -188,68 +195,105 @@ public class DataController {
     // return student data as well as all of name university that study in
     @GetMapping("/students/{id}")
     public Student getStudentbyId(@PathVariable() long id) {
-        return students.stream().filter(result -> result.getId() == id).findFirst().orElseThrow(()->new DataNotFoundException(id));
-    
+        return students.stream().filter(result -> result.getId() == id).findFirst()
+                .orElseThrow(() -> new DataNotFoundException(id));
+
     }
 
     // Add new student
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @PostMapping("/students")
-    public void addStudent(@RequestBody Student student) {
+    public void addStudent(@RequestBody Student student) throws INTERNAL_SERVER_ERROR {
+
         try {
             students.add(new Student(counter_student.getAndIncrement(), student.getName(), student.getEducation()));
             MapStudentUniversity(1);
-        } catch (DataCannotCreateException ex) {
-            throw new DataCannotCreateException("Could not created the data");
+        } catch (NullPointerException e) {
+            students.remove(students.get(students.size() - 1));
+            counter_student.getAndDecrement();
+            throw new INTERNAL_SERVER_ERROR();
         }
-
     }
 
     // Edit student info
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/students/{id}")
-    public void updateStudent(@RequestBody Student student, @PathVariable long id) {
+    public void updateStudent(@RequestBody Student student, @PathVariable long id) throws INTERNAL_SERVER_ERROR {
 
-        boolean Unfound=true;
-        boolean dontHave = true;
-        
+        int found = 0;
+        List<Education> temp_edu = new ArrayList<>();
+        List<Integer> index = new ArrayList<>();
+        List<Integer> index_backup = new ArrayList<>();
+        // int remove=0;
         for (int i = 0; i < students.size(); i++) {
-            Student target_std =students.get(i);
-            if (target_std.getId() == id) { 
-                Unfound=false;
+            Student target_std = students.get(i);
+
+            for (int t = 0; t < target_std.getEducation().size(); t++) {
+                temp_edu.add(new Education(target_std.getEducation().get(t).getDegree(),
+                        target_std.getEducation().get(t).getuName()));
+            }
+
+            if (target_std.getId() == id) {
+                found = 1;
                 String old_std_name = target_std.getName();
-                for (int j = 0; j < universities.size(); j++) {
-                   UniversityInfo target_uni = universities.get(j);
-                    for (int k = 0; k < target_uni.getName_std().size(); k++) {
-                        //std name in uni[j] == std name in Std[i]?
-                        if (target_uni.getName_std().get(k).equalsIgnoreCase(old_std_name)) {
-                            target_std.setName(student.getName());//new name
-                            target_std.setEducation(student.getEducation());//new 
-                            //Already SET in Student class
-                            target_uni.getName_std().remove(target_uni.getName_std().get(k));//remove when found equals
+                try {
+                    for (int j = 0; j < universities.size(); j++) {
+                        UniversityInfo target_uni = universities.get(j);
+                        for (int k = 0; k < target_uni.getName_std().size(); k++) {
+                            // std name in uni[j] == std name in Std[i]?
+                            if (target_uni.getName_std().get(k).equalsIgnoreCase(old_std_name)) {
+                                index_backup.add(j);
+                                target_std.setName(student.getName());// new name
+                                target_std.setEducation(student.getEducation());// new
+                                // Already SET in Student class
+                                target_uni.getName_std().remove(target_uni.getName_std().get(k));// remove when found
+                                                                                                 // equals
+
+                            }
                         }
                     }
-                    for(int x=0;x<target_std.getEducation().size();x++){
-                        if(target_std.getEducation().get(x).getuName().equalsIgnoreCase(target_uni.getName())){
-                                target_uni.addName_std(target_std.getName());
-                                dontHave = false;
-                        }
-                        
-                    }    
-                } 
-                if (dontHave) {
-                    students.remove(target_std);
-                    throw new DataCannotCreateException(
-                            "Could not created the data :: Can not found this university name in UniversityInfo.");
-                } 
-                                                
-            }     
-        }                    
-    
 
-        if(Unfound){
-            throw new DataNotFoundException(id); 
-        } 
+                    for (int z = 0; z < universities.size(); z++) {
+                        for (int x = 0; x < target_std.getEducation().size(); x++) {
+                            if (target_std.getEducation().get(x).getuName()
+                                    .equalsIgnoreCase(universities.get(z).getName())) {
+                                index.add(z); // save uni index that is found.
+                            }
+                            if (index.size() == target_std.getEducation().size()) {
+                                for (int z_in = 0; z_in < index.size(); z_in++) {
+                                    universities.get(index.get(z_in)).addName_std(target_std.getName());
+                                }
+
+                            }
+                        }
+
+                    }
+                    if (index.size() != target_std.getEducation().size()) {
+                        for (int in_b = 0; in_b < index_backup.size(); in_b++) {
+                            universities.get(index_backup.get(in_b)).addName_std(old_std_name);
+                        }
+                        target_std.setName(old_std_name);
+                        target_std.setEducation(temp_edu);
+                        throw new DataCannotCreateException(
+                                "Could not created the data :: Can not found this university name in UniversityInfo.");
+                    }
+
+                } catch (NullPointerException e) {
+                    for (int in_b = 0; in_b < index_backup.size(); in_b++) {
+                        universities.get(index_backup.get(in_b)).addName_std(old_std_name);
+                    }
+                    target_std.setName(old_std_name);
+                    target_std.setEducation(temp_edu);
+                    throw new INTERNAL_SERVER_ERROR();
+                }
+
+            }
+            
+
+        }
+        if (found != 1) {
+            throw new DataNotFoundException(id);
+        }
     }
 
     // Delete student
