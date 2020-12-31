@@ -68,16 +68,17 @@ All inputs and outputs use JSON format.
     }
   
   ```
-  ### Rules
+  ### Exception Handling
   The function will return the correct conversion if the supplied problems are properly formatted, otherwise, it will **return a string** that describes an error that is meaningful to the user.
 * Situations that will return an error:
      * If the requesting **id** do not has in the data will return: ```Could not find data id :: {id}```
-     * Each amendment to the university data  ```[ PUT .../universities/{id} ]``` should not revise the university name to the name already in the data. Otherwise, the function will return: ```Could not created the data :: Already has this university name```
-     * 
-    
-  
-  ### JSON format
-  
+     * Each editing or adding to the **university data** [ PUT .../universities/{id} | POST .../universities/{id} ] should not revise the university name to the name already in the university data. Otherwise, the function will return: ```Could not created the data :: Already has this university name```
+     * Each editing or adding **the name of the university in the student data** [ PUT .../students/{id} | POST .../students/{id} ]. The university name should be match in university name of university data. Otherwise, the function will return:<br> ```Could not created the data :: Can not found this university name in UniversityInfo.```
+* Handling Http errors:
+     * **404: Not Found** will return: ```Could not find data id :: {id}```
+     * **500: Internal Server Error** will return: ```Internal Server Error :: Format is invalid.```
+      
+  ### JSON format  
 * Class : Student 
 ```JSON
    {
@@ -113,7 +114,7 @@ Student name : Sathinee Thanawuthikrai
 Education : Bachelor's Degree, Mahidol University
  
 ```
-## Add sample data 
+### Add sample data 
 Add data by editing it in the DataController.java 
 ```Java
 public DataController() {
