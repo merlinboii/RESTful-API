@@ -26,4 +26,11 @@ public class DataExceptionAdvice {
         return e.getMessage();
     }
 
+    @ResponseBody
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(INTERNAL_SERVER_ERROR.class)
+    String internalServerErr(INTERNAL_SERVER_ERROR e){
+        return e.getMessage();
+    }
+
 }
