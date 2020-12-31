@@ -36,5 +36,5 @@ public class Student {
     public void setEducation(List<Education> education) {
         this.education = education;
     }
-
+    
 }
