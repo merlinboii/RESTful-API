@@ -1,6 +1,5 @@
 ## API PROJECT | RESTful Api
  RESTful API for collecting university and student data.<br>
- (This repository is being developed to database connecting)
  
 ### Technology Stacks
 * Java 11
