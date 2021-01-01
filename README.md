@@ -80,7 +80,7 @@ All inputs and outputs use JSON format.
      * **500: Internal Server Error** will return: ```Internal Server Error :: Format is invalid.```
       
   ### JSON format  
-* Class : Student : store students data.
+* Class : Student : store student data.
 ```JSON
    {
     "id": int,
@@ -88,14 +88,14 @@ All inputs and outputs use JSON format.
     "education": Object[]
   }
 ```
-* Class : Education : store educations in each student.
+* Class : Education : store education in each student.
 ```JSON
   {
     "degree": String,
     "uName": String
   }
 ```
-* Class : UniversityInfo : store universities data.
+* Class : UniversityInfo : store university data.
 ```JSON
    {
     "id": int,
